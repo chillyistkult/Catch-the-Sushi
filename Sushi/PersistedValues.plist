@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>XInitializerItem</key>
+	<string>DoNotEverChangeMe</string>
+	<key>Puppies Caught</key>
+	<integer>0</integer>
+	<key>Puppies Dropped</key>
+	<integer>0</integer>
+	<key>Games Played</key>
+	<integer>0</integer>
+	<key>Maximum Streak</key>
+	<integer>0</integer>
+	<key>Average</key>
+	<integer>0</integer>
+	<key>High Score</key>
+	<integer>0</integer>
+	<key>Catch Percentage</key>
+	<integer>0</integer>
+	<key>Total Score</key>
+	<integer>0</integer>
+</dict>
+</plist>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+<<<<<<< Updated upstream
+	<string>A5E89402-532B-47F7-BA97-7EB674AE9A92</string>
+=======
+	<string>642CD51E-EB34-4EE2-AE96-17A7B0C99D89</string>
+>>>>>>> Stashed changes
+	<key>IDESourceControlProjectName</key>
+	<string>Sushi</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>545351AD6AA7839567C00C54DBBD9287AC0B1736</key>
+		<string>https://github.com/smahmoo4/Catch-The-Puppies.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Sushi/Sushi.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>545351AD6AA7839567C00C54DBBD9287AC0B1736</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/smahmoo4/Catch-The-Puppies.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>545351AD6AA7839567C00C54DBBD9287AC0B1736</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>545351AD6AA7839567C00C54DBBD9287AC0B1736</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Sushi</string>
+		</dict>
+	</array>
+</dict>
+</plist>
