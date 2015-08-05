@@ -7,10 +7,8 @@ class MainMenuScene: UIViewController{
     
     override func viewDidLoad() {
         if counter == 0 {
-        counter++
+            counter++
         }
-    }
-
-    
+    }    
     
 }

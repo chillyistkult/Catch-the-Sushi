@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 47;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -24,7 +24,7 @@
 			containerPortal = 5956B9031AA66DC100154284 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5956B90A1AA66DC100154284;
-			remoteInfo = "Sushi";
+			remoteInfo = Sushi;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -93,8 +93,7 @@
 				5956B91D1AA66DC100154284 /* LaunchScreen.xib */,
 				5956B90E1AA66DC100154284 /* Supporting Files */,
 			);
-			name = Sushi;
-			path = "Sushi";
+			path = Sushi;
 			sourceTree = "<group>";
 		};
 		5956B90E1AA66DC100154284 /* Supporting Files */ = {
@@ -111,8 +110,7 @@
 				5956B92A1AA66DC100154284 /* SushiTests.swift */,
 				5956B9281AA66DC100154284 /* Supporting Files */,
 			);
-			name = SushiTests;
-			path = "SushiTests";
+			path = SushiTests;
 			sourceTree = "<group>";
 		};
 		5956B9281AA66DC100154284 /* Supporting Files */ = {
@@ -139,7 +137,7 @@
 			dependencies = (
 			);
 			name = Sushi;
-			productName = "Sushi";
+			productName = Sushi;
 			productReference = 5956B90B1AA66DC100154284 /* Sushi.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -157,7 +155,7 @@
 				5956B9261AA66DC100154284 /* PBXTargetDependency */,
 			);
 			name = SushiTests;
-			productName = "SushiTests";
+			productName = SushiTests;
 			productReference = 5956B9241AA66DC100154284 /* SushiTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -167,7 +165,7 @@
 		5956B9031AA66DC100154284 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					5956B90A1AA66DC100154284 = {
@@ -181,7 +179,7 @@
 				};
 			};
 			buildConfigurationList = 5956B9061AA66DC100154284 /* Build configuration list for PBXProject "Sushi" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -350,7 +348,6 @@
 		5956B92F1AA66DC100154284 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Sushi/Info.plist;
@@ -363,7 +360,6 @@
 		5956B9301AA66DC100154284 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Sushi/Info.plist;
