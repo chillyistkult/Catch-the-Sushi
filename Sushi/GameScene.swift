@@ -24,7 +24,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     
     let streakBar = SKSpriteNode() //Streak-Meter
     
-    var duration: NSTimeInterval = 4.0 //Fallzeiten
+    var duration: TimeInterval = 4.0 //Fallzeiten
     
     var streakPoints = 0 //Punkte
 
@@ -34,7 +34,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     
     var gamesPlayed = 0 //gespielte Spiele
     
-    var label = UILabel(frame: CGRectMake(0, 0, 200, 48))
+    var label = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 48))
     
     var money = 0 //Yens
     
@@ -48,11 +48,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     
     let streakMeter = SKSpriteNode(imageNamed: "StreakMeter")
     
-    var moneyLabel = UILabel(frame: CGRectMake(0, 0, 200, 48))
+    var moneyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 48))
     
-    var gameEnded = UILabel(frame: CGRectMake(0, 0, 700, 70))
+    var gameEnded = UILabel(frame: CGRect(x: 0, y: 0, width: 700, height: 70))
     
-    let replayGame = UIButton.buttonWithType(UIButtonType.Custom) as! UIButton
+    let replayGame = UIButton(type: .custom)
     
     //Bentobox Mockup
     var bentoBoxViews = [UIImageView]()
@@ -66,10 +66,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     
     let play = UIImage(named: "Play") as UIImage?
     
-    var sushi_Timer = NSTimer()
-    var gameOver_Timer = NSTimer()
-    var cloud_Timer = NSTimer()
-    var speed_Timer = NSTimer()
+    var sushi_Timer = Timer()
+    var gameOver_Timer = Timer()
+    var cloud_Timer = Timer()
+    var speed_Timer = Timer()
     
     var sushiArray = [SKSpriteNode]()
     
@@ -81,42 +81,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     // Läd wenn Szene startet
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
         gameDelegate = self
         
         // Neues Spiel
-        replayGame.frame = CGRectMake(90, 320, 200, 200)
-        replayGame.setBackgroundImage(play, forState: .Normal)
-        replayGame.addTarget(self, action: "buttonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+        replayGame.frame = CGRect(x: 90, y: 320, width: 200, height: 200)
+        replayGame.setBackgroundImage(play, for: UIControlState())
+        replayGame.addTarget(self, action: #selector(GameScene.buttonAction(_:)), for: UIControlEvents.touchUpInside)
         
         // Punkteanzeige
-        moneyLabel.center = CGPointMake(310, 40)
-        moneyLabel.textAlignment = NSTextAlignment.Center
+        moneyLabel.center = CGPoint(x: 310, y: 40)
+        moneyLabel.textAlignment = NSTextAlignment.center
         moneyLabel.text = String(self.money)
         moneyLabel.font = UIFont(name:"Menlo-Bold", size: 40.0)
         self.view?.addSubview(moneyLabel)
         
         //Physics
-        physicsWorld.gravity = CGVectorMake(0, 0)
+        physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         physicsWorld.contactDelegate = self
         
         //Collision Properties
-        chopsticks.physicsBody = SKPhysicsBody(rectangleOfSize: chopsticks.size, center: chopsticks.position)
-        chopsticks.physicsBody?.dynamic = true
+        chopsticks.physicsBody = SKPhysicsBody(rectangleOf: chopsticks.size, center: chopsticks.position)
+        chopsticks.physicsBody?.isDynamic = true
         chopsticks.physicsBody?.categoryBitMask = PhysicsCategory.PhysicsChopsticks
         chopsticks.physicsBody?.contactTestBitMask = PhysicsCategory.PhysicsSushi
         chopsticks.physicsBody?.collisionBitMask = PhysicsCategory.None
         chopsticks.physicsBody?.usesPreciseCollisionDetection = true
         
         // Sushi spawnen jede halbe Sekunde
-        speed_Timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "speedUp", userInfo: nil, repeats: true)
+        speed_Timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameScene.speedUp), userInfo: nil, repeats: true)
         
-        sushi_Timer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: "pickSushi", userInfo: nil, repeats: true)
+        sushi_Timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(GameScene.pickSushi), userInfo: nil, repeats: true)
 
         
         //Wolken spawnen jede Sekunde
-        cloud_Timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "clouds", userInfo: nil, repeats: true)
+        cloud_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(GameScene.clouds), userInfo: nil, repeats: true)
 
         // Skalierungen
         chopsticks.xScale = 0.30
@@ -149,6 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         chopsticks.position = CGPoint(x: 512, y: 10)
         
         mountain.position = CGPoint(x: 512, y: 150)
+        mountain.zPosition = -1
         
         streakBar.position = CGPoint(x:327, y: 392)
         
@@ -168,36 +169,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         updateStreakMeter(streakBar, withStreak: streakPoints)
         
         //Game-Over timer ist auf 120 Sekunden gesetzt
-        gameOver_Timer = NSTimer.scheduledTimerWithTimeInterval(120.0, target: self, selector: "lostAll", userInfo: nil, repeats: false)
+        gameOver_Timer = Timer.scheduledTimer(timeInterval: 120.0, target: self, selector: #selector(GameScene.lostAll), userInfo: nil, repeats: false)
     }
     
     //Chopstick Slider
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        var touch = touches.first as! UITouch
-        chopsticks.position = touch.locationInNode(self)
-        var chopsticksPos = chopsticks.position.x
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first!
+        chopsticks.position = touch.location(in: self)
+        let chopsticksPos = chopsticks.position.x
         chopsticks.position = CGPoint(x: chopsticksPos, y: 10)
     }
     
-    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
-        var touch: UITouch! = touches.first as! UITouch
-        chopsticks.position = touch.locationInNode(self)
-        var chopsticksPos = chopsticks.position.x
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch: UITouch! = touches.first!
+        chopsticks.position = touch.location(in: self)
+        let chopsticksPos = chopsticks.position.x
         chopsticks.position = CGPoint(x: chopsticksPos, y: 10)
     }
     
     // Zufällige Fallzeit für die Sushi
-    func speedUp() -> NSTimeInterval {
-        duration = NSTimeInterval(arc4random_uniform(4)+1)
+    func speedUp() -> TimeInterval {
+        duration = TimeInterval(arc4random_uniform(4)+1)
         if duration > 1 {
-            duration--
+            duration -= 1
         }
         return duration
     }
     
     //Sushi berührt Chopsticks
-    func sushiCollidedWithChopsticks(sushi:SKSpriteNode) {
-        streak++
+    func sushiCollidedWithChopsticks(_ sushi:SKSpriteNode) {
+        streak += 1
         sushi.removeFromParent() //Sushi wird von der Szene entfernt
         updateBentoBox(UIImage(named: sushi.name!)!) //Bentobox wird geupdatet
         self.moneyLabel.text = String(money)
@@ -220,7 +221,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         
     }
     
-    func calcStreak(sPoints: Int) {
+    func calcStreak(_ sPoints: Int) {
         
         //Bonusgeld wird abhängig der Streakpoints berechnet
         if sPoints < 5 {
@@ -229,24 +230,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         
         if sPoints >= 5 && sPoints < 10 {
             bonus = 100
-            removeChildrenInArray(streakIcons)
+            removeChildren(in: streakIcons)
             addChild(twoX)
         }
         
         if sPoints >= 10 && sPoints < 15 {
             bonus = 200
-            removeChildrenInArray(streakIcons)
+            removeChildren(in: streakIcons)
             addChild(fourX)
         }
         
         if sPoints >= 15 && sPoints < 20 {
             bonus = 400
-            removeChildrenInArray(streakIcons)
+            removeChildren(in: streakIcons)
             addChild(eightX)
         }
         
         if sPoints >= 20 {
-            removeChildrenInArray(streakIcons)
+            removeChildren(in: streakIcons)
             addChild(sixteenX)
             bonus = 800
         }
@@ -256,7 +257,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     //Power-ups
     func powerUp() {
         
-        var type = arc4random_uniform(3)+1
+        let type = arc4random_uniform(3)+1
         
         switch(type) {
             case 1:
@@ -271,45 +272,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
                 return
                 
             default:
-                println("No power-up activated")
+                print("No power-up activated")
                 return
         }
     }
     
     //Die größe der Chopsticks wird für 5 Sekunden erhöht
     func bigChopsticks() {
-        println("Big chopsticks activated!")
-        var scale : CGFloat = 0.5
-        var time : NSTimeInterval = 0.5
-        var scaleAction = SKAction.scaleTo(scale, duration: time)
-        chopsticks.runAction(scaleAction)
+        print("Big chopsticks activated!")
+        let scale : CGFloat = 0.5
+        let time : TimeInterval = 0.5
+        let scaleAction = SKAction.scale(to: scale, duration: time)
+        chopsticks.run(scaleAction)
 
-        var small_chopsticks = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "smallchopsticks", userInfo: nil, repeats: false)
+        _ = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(GameScene.smallchopsticks), userInfo: nil, repeats: false)
     }
     
     //Nach 5 Sekunden werden die Chopsticks resettet
     func smallchopsticks() {
-        var scale : CGFloat = 0.3
-        var time : NSTimeInterval = 0.5
-        var scaleAction = SKAction.scaleTo(scale, duration: time)
-        chopsticks.runAction(scaleAction)
+        let scale : CGFloat = 0.3
+        let time : TimeInterval = 0.5
+        let scaleAction = SKAction.scale(to: scale, duration: time)
+        chopsticks.run(scaleAction)
     }
     
     //Slowmotion für 8 Sekunden    
     func slowMo() {
-        println("Slow motion powerup activated!")
+        print("Slow motion powerup activated!")
 
-        duration = NSTimeInterval(4.0)
-        var speedItUp = NSTimer.scheduledTimerWithTimeInterval(8, target: self, selector: "reSpeed", userInfo: nil, repeats: false)
+        duration = TimeInterval(4.0)
+        _ = Timer.scheduledTimer(timeInterval: 8, target: self, selector: #selector(GameScene.reSpeed), userInfo: nil, repeats: false)
     }
     
     //Fallgeschwindigkeit wird nach Slowmo wieder hergestellt
     func reSpeed() {
         //self.label.removeFromSuperview()
-        speed_Timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "speedUp", userInfo: nil, repeats: true)
+        speed_Timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameScene.speedUp), userInfo: nil, repeats: true)
     }
     
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         
         //Zentrale Kollisionsabfrage
         var firstBody: SKPhysicsBody
@@ -332,9 +333,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     func pickSushi() {
     
         //Sushi wird zufällig am oberen Bildschirmrand positioniert
-        var randomSushiPosition = Int(arc4random_uniform(400)+300)
+        let randomSushiPosition = Int(arc4random_uniform(400)+300)
         
-        var sushi: SKSpriteNode! = SKSpriteNode(imageNamed: "sushi1")
+        let sushi: SKSpriteNode! = SKSpriteNode(imageNamed: "sushi1")
         sushi.xScale = 0.4
         sushi.yScale = 0.4
         sushi.position = CGPoint(x : randomSushiPosition, y : 768)
@@ -342,47 +343,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         
         //Code nötig für Kollisionsabfrage
         sushi.physicsBody = SKPhysicsBody(circleOfRadius: sushi.size.height/3)
-        sushi.physicsBody?.dynamic = true
+        sushi.physicsBody?.isDynamic = true
         sushi.physicsBody?.categoryBitMask = PhysicsCategory.PhysicsSushi
         sushi.physicsBody?.contactTestBitMask = PhysicsCategory.PhysicsChopsticks
         sushi.physicsBody?.collisionBitMask = PhysicsCategory.None
         
         //Eines von drei Sushitypen
-        var randomSushi = Int(arc4random_uniform(3)+1)
+        let randomSushi = Int(arc4random_uniform(3)+1)
         
         switch(randomSushi) {
             //Animiert die Sushi's
-            case 1 : let sushi_animate = SKAction.animateWithTextures([
+            case 1 : let sushi_animate = SKAction.animate(with: [
                         SKTexture(imageNamed: "sushi1"),
                         SKTexture(imageNamed: "sushi1")
                         ], timePerFrame: 0.25)
             sushi.name = "sushi1"
             sushiArray.append(sushi)
-            let run = SKAction.repeatActionForever(sushi_animate)
-            sushi.runAction(run, completion: { sushi.removeFromParent() })
+            let run = SKAction.repeatForever(sushi_animate)
+            sushi.run(run, completion: { sushi.removeFromParent() })
             fallSushi(sushi, rSushi : randomSushiPosition)
 
-            case 2 : let sushi_animate = SKAction.animateWithTextures([
+            case 2 : let sushi_animate = SKAction.animate(with: [
                 SKTexture(imageNamed: "sushi2"),
                 SKTexture(imageNamed: "sushi2")
                 ], timePerFrame: 0.25)
             sushi.name = "sushi2"
             sushiArray.append(sushi)
-            let run = SKAction.repeatActionForever(sushi_animate)
-            sushi.runAction(run, completion: { sushi.removeFromParent() })
+            let run = SKAction.repeatForever(sushi_animate)
+            sushi.run(run, completion: { sushi.removeFromParent() })
             fallSushi(sushi, rSushi : randomSushiPosition)
             
-            case 3 : let sushi_animate = SKAction.animateWithTextures([
+            case 3 : let sushi_animate = SKAction.animate(with: [
                 SKTexture(imageNamed: "sushi3"),
                 SKTexture(imageNamed: "sushi3")
                 ], timePerFrame: 0.25)
             sushi.name = "sushi3"
             sushiArray.append(sushi)
-            let run = SKAction.repeatActionForever(sushi_animate)
-            sushi.runAction(run, completion: { sushi.removeFromParent() })
+            let run = SKAction.repeatForever(sushi_animate)
+            sushi.run(run, completion: { sushi.removeFromParent() })
             fallSushi(sushi, rSushi : randomSushiPosition)
     
-            default: println("Sushi not found")
+            default: print("Sushi not found")
             
         }
     }
@@ -390,18 +391,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     //Spielende
     func gameOver() {
         gamesPlayed=1
-        gameEnded.center = CGPointMake(190, 260)
-        gameEnded.textAlignment = NSTextAlignment.Center
+        gameEnded.center = CGPoint(x: 190, y: 260)
+        gameEnded.textAlignment = NSTextAlignment.center
         gameEnded.text = "GAME OVER"
         gameEnded.font = UIFont(name:"Menlo-Bold", size: 40.0)
         self.view?.addSubview(gameEnded)
         sushi_Timer.invalidate()
-        self.removeChildrenInArray(sushiArray)
+        self.removeChildren(in: sushiArray)
         gameOver_Timer.invalidate()
         self.view!.addSubview(replayGame)
     }
     
-    func buttonAction(sender:UIButton!)
+    func buttonAction(_ sender:UIButton!)
     {
         self.removeAllChildren()
 
@@ -415,25 +416,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         let skView = self.view! as SKView
         skView.ignoresSiblingOrder = true
         let scene = GameScene(fileNamed: "GameScene")
-        scene.scaleMode = .AspectFill
+        scene?.scaleMode = .aspectFill
         skView.presentScene(scene)
     }
     
     func restoreOrignalState(){
-        bentoBox.removeAll(keepCapacity: false)
+        bentoBox.removeAll(keepingCapacity: false)
         money = 0
         sushiDropped = 0
         streakPoints = 0
     }
     
-    func fallSushi(node : SKSpriteNode, rSushi : Int) {
+    func fallSushi(_ node : SKSpriteNode, rSushi : Int) {
 
-        var fallDown = SKAction.moveTo(CGPoint(x: rSushi, y: -20), duration: duration)
+        let fallDown = SKAction.move(to: CGPoint(x: rSushi, y: -20), duration: duration)
 
-        node.runAction(fallDown, completion: {
-            self.removeChildrenInArray(self.streakIcons)
-            self.sushiDropped++
-            println("Dropped: \(self.sushiDropped)")
+        node.run(fallDown, completion: {
+            self.removeChildren(in: self.streakIcons)
+            self.sushiDropped += 1
             self.streakPoints = 0
             self.bonus = 0
             self.money -= 300;
@@ -458,7 +458,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     //Bentobox wird aktualisiert
-    func updateBentoBox(catchedSushi: UIImage) {
+    func updateBentoBox(_ catchedSushi: UIImage) {
         var found = false
         if(bentoBox.isEmpty) {
             bentoBox.append(catchedSushi)
@@ -476,16 +476,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         //Wenn Bentobox voll, dann +1100 Yen und Bonus wenn vorhanden
         if(bentoBox.count == 3) {
             money += 1100 + bonus
-            bentoBox.removeAll(keepCapacity: false)
+            bentoBox.removeAll(keepingCapacity: false)
         }
         drawBentoBox(bentoBox)
     }
     
     //Bentobox Mockup wird gezeichnet
-    func drawBentoBox(bentoBox: [UIImage]) {
-        var size : CGFloat = 50
+    func drawBentoBox(_ bentoBox: [UIImage]) {
+        let size : CGFloat = 50
         var x : CGFloat = 10
-        var y : CGFloat = 10
+        let y : CGFloat = 10
         if(bentoBox.isEmpty) {
             for view in bentoBoxViews {
                 view.removeFromSuperview()
@@ -494,7 +494,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         else {
             for image in bentoBox {
                 let bentoBoxView = UIImageView()
-                bentoBoxView.frame = CGRectMake(x, y, size, size)
+                bentoBoxView.frame = CGRect(x: x, y: y, width: size, height: size)
                 bentoBoxView.image = image;
                 bentoBoxViews.append(bentoBoxView)
                 self.view?.addSubview(bentoBoxView);
@@ -504,7 +504,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     //Streakmeter am linken Bildschirmrand wird geupdatet
-    func updateStreakMeter(node: SKSpriteNode, withStreak sP: Int) {
+    func updateStreakMeter(_ node: SKSpriteNode, withStreak sP: Int) {
         
         let barSize = CGSize(width: 21, height: 474)
         
@@ -519,13 +519,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         let barHeight = (barSize.height) * CGFloat(sP) / CGFloat(25)
         let barRect = CGRect(x: 0, y: 5, width: barSize.width, height: barHeight)
         
-        CGContextFillRect(context, barRect)
+        context?.fill(barRect)
         
         let spriteImage = UIGraphicsGetImageFromCurrentImageContext()
         
         UIGraphicsEndImageContext()
         
-        node.texture = SKTexture(image: spriteImage)
+        node.texture = SKTexture(image: spriteImage!)
         node.size = barSize
 
     }
@@ -533,15 +533,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     //Animiert die Wolken
     func clouds() {
         
-        var randomCloudPosition = Int(arc4random_uniform(470)+200)
-        var cloudPick =  Int(arc4random_uniform(5)+1) //pick random cloud
+        let randomCloudPosition = Int(arc4random_uniform(470)+200)
+        let cloudPick =  Int(arc4random_uniform(5)+1) //pick random cloud
 
-        var cloud: SKSpriteNode! = SKSpriteNode(imageNamed: "cloud\(cloudPick)")
+        let cloud: SKSpriteNode! = SKSpriteNode(imageNamed: "cloud\(cloudPick)")
         
         cloud.xScale = 0.5
         cloud.yScale = 0.5
         
-        var direction = Int(arc4random_uniform(2)+1)
+        let direction = Int(arc4random_uniform(2)+1)
         
         switch(direction){
             //L->R Movement
@@ -554,60 +554,60 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         
         self.addChild(cloud)
         
-        var moveAcrossLR = SKAction.moveTo(CGPoint(x: 800, y: randomCloudPosition), duration:7.0) // Left to right transition
+        let moveAcrossLR = SKAction.move(to: CGPoint(x: 800, y: randomCloudPosition), duration:7.0) // Left to right transition
         
-        var moveAcrossRL = SKAction.moveTo(CGPoint(x: -40, y: randomCloudPosition), duration:7.0) // right to left transition
+        let moveAcrossRL = SKAction.move(to: CGPoint(x: -40, y: randomCloudPosition), duration:7.0) // right to left transition
         
         //Richtung der Animation
         switch(cloudPick) {
             case 1:
             if(direction == 1) {
-                cloud.runAction(moveAcrossLR, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossLR, completion: { cloud.removeFromParent() })
                 
             }
             else {
-                cloud.runAction(moveAcrossRL, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossRL, completion: { cloud.removeFromParent() })
             }
             
             case 2:
             if(direction == 1) {
-                cloud.runAction(moveAcrossLR, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossLR, completion: { cloud.removeFromParent() })
             }
             else {
-                cloud.runAction(moveAcrossRL, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossRL, completion: { cloud.removeFromParent() })
             }
             
             case 3:
             if(direction == 1) {
-                cloud.runAction(moveAcrossLR, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossLR, completion: { cloud.removeFromParent() })
             }
             else {
-                cloud.runAction(moveAcrossRL, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossRL, completion: { cloud.removeFromParent() })
             }
             
             case 4:
             if(direction == 1) {
-                cloud.runAction(moveAcrossLR, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossLR, completion: { cloud.removeFromParent() })
             }
             else {
-                cloud.runAction(moveAcrossRL, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossRL, completion: { cloud.removeFromParent() })
             }
             
             case 5:
             if(direction == 1) {
-                cloud.runAction(moveAcrossLR, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossLR, completion: { cloud.removeFromParent() })
             }
             else {
-                cloud.runAction(moveAcrossRL, completion: { cloud.removeFromParent() })
+                cloud.run(moveAcrossRL, completion: { cloud.removeFromParent() })
             }
 
-            default: println("Cloud not found")
+            default: print("Cloud not found")
         }
 
     }
     
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
     }
 }

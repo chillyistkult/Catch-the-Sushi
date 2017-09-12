@@ -2,15 +2,19 @@ import UIKit
 import SpriteKit
 
 extension SKNode {
-    class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
-            var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)!
-            var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
-            
-            archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
-            archiver.finishDecoding()
-            return scene
+    class func unarchive(from file : String) -> SKNode? {
+        if let url = Bundle.main.url(forResource: file, withExtension: "sks") {
+            do {
+                let sceneData = try Data(contentsOf: url)
+                let archiver = NSKeyedUnarchiver(forReadingWith: sceneData)
+                
+                archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
+                let scene = archiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as! GameScene
+                archiver.finishDecoding()
+                return scene
+            } catch {
+                return nil
+            }
         } else {
             return nil
         }
@@ -21,41 +25,40 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("pauseGameScene"), name: "Pause Game", object: nil)
-        if let scene = GameScene.unarchiveFromFile("GameScene") as? GameScene {
+        NotificationCenter.default.addObserver(self, selector: #selector(GameViewController.pauseGameScene), name: NSNotification.Name(rawValue: "Pause Game"), object: nil)
+        if let scene = GameScene.unarchive(from: "GameScene") as? GameScene {
 
             let skView = self.view as! SKView
             skView.ignoresSiblingOrder = false
-            scene.scaleMode = .AspectFill
+            scene.scaleMode = .aspectFill
             skView.presentScene(scene)
         }
     }
     
     func pauseGameScene() {
-        if let scene = GameScene.unarchiveFromFile("GameScene") as? GameScene {
+        if (GameScene.unarchive(from: "GameScene") as? GameScene) != nil {
             let skView = self.view as! SKView
 
             if skView.scene != nil {
-                skView.paused = skView.scene!.paused
+                skView.isPaused = skView.scene!.isPaused
             }
         }
     }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.portrait
+    }
 
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return false
     }
-
-    override func supportedInterfaceOrientations() -> Int {
-        return UIInterfaceOrientation.Portrait.rawValue
-    }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }
