@@ -35,7 +35,7 @@ class GameViewController: UIViewController {
         }
     }
     
-    func pauseGameScene() {
+    @objc func pauseGameScene() {
         if (GameScene.unarchive(from: "GameScene") as? GameScene) != nil {
             let skView = self.view as! SKView
 

@@ -76,7 +76,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
 
     
     //MARK: Game Delegate Methods
-    func lostAll() {
+    @objc func lostAll() {
         gameOver()
     }
     
@@ -188,7 +188,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     // Zufällige Fallzeit für die Sushi
-    func speedUp() -> TimeInterval {
+    @objc func speedUp() -> TimeInterval {
         duration = TimeInterval(arc4random_uniform(4)+1)
         if duration > 1 {
             duration -= 1
@@ -289,7 +289,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     //Nach 5 Sekunden werden die Chopsticks resettet
-    func smallchopsticks() {
+    @objc func smallchopsticks() {
         let scale : CGFloat = 0.3
         let time : TimeInterval = 0.5
         let scaleAction = SKAction.scale(to: scale, duration: time)
@@ -305,7 +305,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     //Fallgeschwindigkeit wird nach Slowmo wieder hergestellt
-    func reSpeed() {
+    @objc func reSpeed() {
         //self.label.removeFromSuperview()
         speed_Timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameScene.speedUp), userInfo: nil, repeats: true)
     }
@@ -330,7 +330,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         }
     }
     
-    func pickSushi() {
+    @objc func pickSushi() {
     
         //Sushi wird zufällig am oberen Bildschirmrand positioniert
         let randomSushiPosition = Int(arc4random_uniform(400)+300)
@@ -402,7 +402,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
         self.view!.addSubview(replayGame)
     }
     
-    func buttonAction(_ sender:UIButton!)
+    @objc func buttonAction(_ sender:UIButton!)
     {
         self.removeAllChildren()
 
@@ -531,7 +531,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate, GameDelegate {
     }
     
     //Animiert die Wolken
-    func clouds() {
+    @objc func clouds() {
         
         let randomCloudPosition = Int(arc4random_uniform(470)+200)
         let cloudPick =  Int(arc4random_uniform(5)+1) //pick random cloud
